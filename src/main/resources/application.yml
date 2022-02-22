@@ -5,3 +5,11 @@ source1:
 source2:
   name: source2
   url: https://source2.com/v2/api
+
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 1000
+        readTimeout: 1000

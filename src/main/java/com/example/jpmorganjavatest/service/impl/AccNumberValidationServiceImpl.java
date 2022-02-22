@@ -66,7 +66,7 @@ public class AccNumberValidationServiceImpl implements AccNumberValidationServic
         String clientName = validationServiceMap.entrySet().stream().filter(entry -> entry.getValue() == sourceService).map(Map.Entry::getKey).findFirst().get();
         log.info("Invoking external api {} to validate acc no {}", clientName, accNo);
         ValidationApiResponseDto validationApiResponseDto = sourceService.validateAccNo(requestDto);
-        return new ResponseDto(clientName, validationApiResponseDto.isValid());
+        return new ResponseDto(clientName, validationApiResponseDto.getIsValid());
     }
 
 }

@@ -38,7 +38,7 @@ class Source2ServiceImplTest
         ValidationApiResponseDto responseDto = source2Service.validateAccNo(validationApiRequestDto);
 
         // THEN
-        assertTrue(responseDto.isValid());
+        assertTrue(responseDto.getIsValid());
     }
 
 
@@ -56,7 +56,7 @@ class Source2ServiceImplTest
         ValidationApiResponseDto responseDto = source2Service.validateAccNo(validationApiRequestDto);
 
         // THEN
-        assertFalse(responseDto.isValid());
+        assertFalse(responseDto.getIsValid());
     }
 
 }

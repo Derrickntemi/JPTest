@@ -2,10 +2,12 @@ package com.example.jpmorganjavatest.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.jackson.Jacksonized;
 
-@Getter
 @Builder
+@Jacksonized
+@Getter
 public class ValidationApiResponseDto
 {
-    private final boolean isValid;
+    private Boolean isValid;
 }
