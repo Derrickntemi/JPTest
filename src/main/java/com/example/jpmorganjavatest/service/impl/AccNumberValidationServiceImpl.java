@@ -7,7 +7,7 @@ import com.example.jpmorganjavatest.dto.ValidationApiRequestDto;
 import com.example.jpmorganjavatest.dto.ValidationApiResponseDto;
 import com.example.jpmorganjavatest.exception.ApiException;
 import com.example.jpmorganjavatest.service.AccNumberValidationService;
-import com.example.jpmorganjavatest.service.client.ValidationApiClient;
+import com.example.jpmorganjavatest.service.SourceService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,13 +21,13 @@ import org.springframework.stereotype.Service;
 public class AccNumberValidationServiceImpl implements AccNumberValidationService
 {
 
-    private final Map<String, ValidationApiClient> validationApisMap;
+    private final Map<String, SourceService> validationServiceMap;
 
 
     @Autowired
-    public AccNumberValidationServiceImpl(Map<String, ValidationApiClient> validationApisMap)
+    public AccNumberValidationServiceImpl(Map<String, SourceService> validationServiceMap)
     {
-        this.validationApisMap = validationApisMap;
+        this.validationServiceMap = validationServiceMap;
     }
 
 
@@ -36,7 +36,7 @@ public class AccNumberValidationServiceImpl implements AccNumberValidationServic
     {
         try
         {
-            List<ValidationApiClient> validationApiClients = retrieveValidationApiClients(accNumberValidationRequestDto.getSources());
+            List<SourceService> validationApiClients = retrieveValidationApiClients(accNumberValidationRequestDto.getSources());
             List<ResponseDto> responses = validationApiClients.stream().map(client -> invokeValidationApis(client, accNumberValidationRequestDto)).collect(Collectors.toList());
             return AccNumberValidationResponseDto.builder().result(responses).build();
         }
@@ -48,34 +48,24 @@ public class AccNumberValidationServiceImpl implements AccNumberValidationServic
     }
 
 
-    private List<ValidationApiClient> retrieveValidationApiClients(List<String> sources)
+    private List<SourceService> retrieveValidationApiClients(List<String> sources)
     {
         if (sources.isEmpty())
         {
-            return new ArrayList<>(validationApisMap.values());
+            return new ArrayList<>(validationServiceMap.values());
         }
 
-        return validationApisMap.entrySet()
-            .stream()
-            .filter(entry -> sources.contains(getClientName(entry.getKey())))
-            .map(Map.Entry::getValue)
-            .collect(Collectors.toList());
+        return sources.stream().map(validationServiceMap::get).collect(Collectors.toList());
     }
 
 
-    private String getClientName(String fullClassPath)
-    {
-        return fullClassPath.substring(fullClassPath.lastIndexOf('.') + 1).toLowerCase();
-    }
-
-
-    private ResponseDto invokeValidationApis(ValidationApiClient validationApiClient, AccNumberValidationRequestDto accNumberValidationRequestDto)
+    private ResponseDto invokeValidationApis(SourceService sourceService, AccNumberValidationRequestDto accNumberValidationRequestDto)
     {
         String accNo = accNumberValidationRequestDto.getAccountNumber();
         ValidationApiRequestDto requestDto = ValidationApiRequestDto.builder().accountNumber(accNo).build();
-        String clientName = validationApisMap.entrySet().stream().filter(entry -> entry.getValue() == validationApiClient).map(entry -> getClientName(entry.getKey())).findFirst().get().toLowerCase();
+        String clientName = validationServiceMap.entrySet().stream().filter(entry -> entry.getValue() == sourceService).map(Map.Entry::getKey).findFirst().get();
         log.info("Invoking external api {} to validate acc no {}", clientName, accNo);
-        ValidationApiResponseDto validationApiResponseDto = validationApiClient.validateAccountNumber(requestDto);
+        ValidationApiResponseDto validationApiResponseDto = sourceService.validateAccNo(requestDto);
         return new ResponseDto(clientName, validationApiResponseDto.isValid());
     }
 

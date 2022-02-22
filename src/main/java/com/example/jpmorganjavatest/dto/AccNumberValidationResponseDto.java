@@ -16,6 +16,6 @@ public class AccNumberValidationResponseDto
     public static class ResponseDto
     {
         private String source;
-        private boolean isValid;
+        private Boolean isValid;
     }
 }

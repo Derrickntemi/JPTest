@@ -29,7 +29,8 @@ public class AccountController
 
 
     @PostMapping("/validate")
-    public AccNumberValidationResponseDto validateAccountNumber(@RequestBody @Valid AccNumberValidationRequestDto accNumberValidationRequestDto) throws ValidationException, ApiException
+    public AccNumberValidationResponseDto validateAccountNumber(@RequestBody @Valid AccNumberValidationRequestDto accNumberValidationRequestDto) throws ValidationException,
+                                                                                                                                                        ApiException
     {
         validateSources(accNumberValidationRequestDto.getSources());
         return accNumberValidationService.validateAccountNumber(accNumberValidationRequestDto);

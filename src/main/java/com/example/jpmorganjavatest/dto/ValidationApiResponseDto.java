@@ -3,8 +3,8 @@ package com.example.jpmorganjavatest.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
 @Getter
+@Builder
 public class ValidationApiResponseDto
 {
     private final boolean isValid;

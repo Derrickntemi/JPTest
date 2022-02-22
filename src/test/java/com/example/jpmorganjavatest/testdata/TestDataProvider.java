@@ -1,6 +1,8 @@
 package com.example.jpmorganjavatest.testdata;
 
 import com.example.jpmorganjavatest.dto.AccNumberValidationRequestDto;
+import com.example.jpmorganjavatest.dto.AccNumberValidationResponseDto;
+import com.example.jpmorganjavatest.dto.AccNumberValidationResponseDto.ResponseDto;
 import com.example.jpmorganjavatest.dto.ValidationApiRequestDto;
 import com.example.jpmorganjavatest.dto.ValidationApiResponseDto;
 import java.util.ArrayList;
@@ -25,5 +27,12 @@ public class TestDataProvider
     public static ValidationApiResponseDto getValidationApiResponseDto(boolean isValid)
     {
         return ValidationApiResponseDto.builder().isValid(isValid).build();
+    }
+
+
+    public static AccNumberValidationResponseDto getAccNumberValidationResponseDto(ResponseDto... response)
+    {
+        List<ResponseDto> sourcesResponse = Arrays.asList(response);
+        return AccNumberValidationResponseDto.builder().result(sourcesResponse).build();
     }
 }
